@@ -84,10 +84,19 @@ function IMAP_PAM_check($username, $password ){
         $fullname = $username;
       }
 
+      // ensure email domain is not doubled in email field
+      @list($tmp_user, $tmp_domain) = explode('@', $username);
+      if( empty($tmp_domain) ) {
+        $email_address = $username . "@" . $c->authenticate_hook['config']['email_base'];
+      }
+      else {
+        $email_address = $username;
+      }
+
       $principal->Create( array(
                       'username' => $username,
                       'user_active' => true,
-                      'email' => $username . "@" . $c->authenticate_hook['config']['email_base'],
+                      'email' => $email_address,
                       'modified' => date('c'),
                       'fullname' => $fullname
               ));
